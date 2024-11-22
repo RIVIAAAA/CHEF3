@@ -1,23 +1,53 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Picker, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
-export default function ChefManagementScreen({ navigation }) {
-  const [menu, setMenu] = useState([]);
+// Define the type for menu items
+type MenuItem = {
+  id: string;
+  dishName: string;
+  description: string;
+  course: string;
+  price: string;
+};
+
+export default function ChefManagementScreen() {
+  // State variables
+  const [menu, setMenu] = useState<MenuItem[]>([]);
   const [dishName, setDishName] = useState('');
   const [description, setDescription] = useState('');
   const [course, setCourse] = useState('Starters');
   const [price, setPrice] = useState('');
 
+  // Function to add a new menu item
   const addMenuItem = () => {
-    const newItem = { id: Date.now().toString(), dishName, description, course, price };
+    if (!dishName || !description || !price) {
+      Alert.alert('Error', 'All fields are required!');
+      return;
+    }
+
+    if (isNaN(Number(price)) || Number(price) <= 0) {
+      Alert.alert('Error', 'Price must be a positive number.');
+      return;
+    }
+
+    const newItem: MenuItem = {
+      id: Date.now().toString(),
+      dishName,
+      description,
+      course,
+      price,
+    };
+
     setMenu([...menu, newItem]);
     setDishName('');
     setDescription('');
     setPrice('');
   };
 
-  const removeMenuItem = (id) => {
-    setMenu(menu.filter(item => item.id !== id));
+  // Function to remove a menu item by id
+  const removeMenuItem = (id: string) => {
+    setMenu(menu.filter((item) => item.id !== id));
   };
 
   return (
@@ -35,7 +65,11 @@ export default function ChefManagementScreen({ navigation }) {
         value={description}
         onChangeText={setDescription}
       />
-      <Picker selectedValue={course} onValueChange={(value) => setCourse(value)}>
+      <Picker
+        selectedValue={course}
+        onValueChange={(value: string) => setCourse(value)}
+        style={styles.picker}
+      >
         <Picker.Item label="Starters" value="Starters" />
         <Picker.Item label="Mains" value="Mains" />
         <Picker.Item label="Desserts" value="Desserts" />
@@ -53,7 +87,9 @@ export default function ChefManagementScreen({ navigation }) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.menuItem}>
-            <Text>{item.dishName} - {item.course} (${item.price})</Text>
+            <Text>
+              {item.dishName} - {item.course} (${item.price})
+            </Text>
             <Button title="Remove" onPress={() => removeMenuItem(item.id)} />
           </View>
         )}
@@ -65,6 +101,16 @@ export default function ChefManagementScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
   title: { fontSize: 20, marginBottom: 20 },
-  input: { borderWidth: 1, padding: 8, marginBottom: 10 },
-  menuItem: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 },
+  input: { borderWidth: 1, padding: 8, marginBottom: 10, borderRadius: 5 },
+  picker: { borderWidth: 1, marginBottom: 10 },
+  menuItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 5,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
 });
+
