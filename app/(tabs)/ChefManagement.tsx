@@ -1,3 +1,4 @@
+// ChefManagementScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -12,14 +13,12 @@ type MenuItem = {
 };
 
 export default function ChefManagementScreen() {
-  // State variables
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [dishName, setDishName] = useState('');
   const [description, setDescription] = useState('');
   const [course, setCourse] = useState('Starters');
   const [price, setPrice] = useState('');
 
-  // Function to add a new menu item
   const addMenuItem = () => {
     if (!dishName || !description || !price) {
       Alert.alert('Error', 'All fields are required!');
@@ -45,7 +44,6 @@ export default function ChefManagementScreen() {
     setPrice('');
   };
 
-  // Function to remove a menu item by id
   const removeMenuItem = (id: string) => {
     setMenu(menu.filter((item) => item.id !== id));
   };
@@ -113,4 +111,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
   },
 });
+
+
 
